@@ -1,4 +1,5 @@
 node_modules
 public/images
 public/files
+public/decrypt
 config.js

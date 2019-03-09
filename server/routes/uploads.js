@@ -119,10 +119,28 @@ router.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, '../public/files/userPH.png'));
 })
 
-router.get('/:id', (req, res, next) => {
-    var file = req.params.fid + ".data";
-    if (fs.existsSync(path.join(__dirname, '../public/files', file))){
-        res.download(path.join(__dirname, '../public/files', file));
+router.get('/:fid', async (req, res, next) => {
+    try {
+        var file = req.params.fid;
+        if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
+            var milliseconds = new Date().getTime();
+            var timestamp = (milliseconds.toString());
+            var f = await File.findOne({ _id: file })
+            var fname = timestamp + f.name;
+            var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
+            encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
+                if (err)
+                    throw err;
+                res.download(path.join(__dirname, '../public/decrypt', fname));
+                fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+            })
+        }
+        else {
+            res.json(msg.failure)
+        }
+    }
+    catch (err) {
+        res.json(msg.failure)
     }
 })
 
