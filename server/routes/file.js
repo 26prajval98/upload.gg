@@ -21,7 +21,7 @@ router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
         var fo = await File.findOne({ _id: file });
         if (fo) {
             if (!fo.owner.equals(req.user._id)) {
-                var m = { ...msg};
+                var m = { ...msg.failure };
                 m.msg = "Unauthorized to delete"
                 res.json(m)
             }
@@ -37,7 +37,9 @@ router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
             }
         }
         else {
-            throw new Error("File does not exist")
+            var m = { ...msg.failure };
+            m.msg = "File does not exist"
+            res.json(m)
         }
     }
     catch (err) {
@@ -77,7 +79,7 @@ router.get('/:fid', authenticate.verifyUser, async (req, res, next) => {
             }
         }
         else {
-            throw new Error("File does not exist")
+            res.json({...msg.failure, msg : "File does not exist"})
         }
     }
     catch (err) {

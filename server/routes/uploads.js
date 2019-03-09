@@ -61,7 +61,7 @@ var middleware = async (req, res, next) => {
         var c = await File.find({ owner: req.user._id }).countDocuments();
 
         if ((req.user.type != "P") && c >= 5) {
-            var m = msg.failure;
+            var m = { ...msg.failure };
             m.msg = "Upload limit reached";
             res.json(m)
         }
@@ -95,10 +95,10 @@ router.post('/update/makepublic/:fid', authenticate.verifyUser, async (req, res,
             )
             res.json(msg.sucess)
         }
-        throw new Error("Unauthorized")
+        res.json({...msg.failure, msg : "Unauthorized"})
     }
     catch (err) {
-        res.json(msg.failure)
+        res.json({...msg.failure})
         throw err;
     }
 })
@@ -114,7 +114,7 @@ router.post('/update/share/:fid', authenticate.verifyUser, async (req, res, next
             )
             res.json(msg.sucess)
         }
-        throw new Error("Unauthorized")
+        res.json({...msg.failure, msg : "Unauthorized"})
     }
     catch (err) {
         res.json(msg.failure)
@@ -133,7 +133,7 @@ router.post('/update/remove/:fid', authenticate.verifyUser, async (req, res, nex
             )
             res.json(msg.sucess)
         }
-        throw new Error("Unauthorized")
+        res.json({...msg.failure, msg : "Unauthorized"})
     }
     catch (err) {
         res.json(msg.failure)
