@@ -37,7 +37,7 @@ var encrypt = (file) => {
     var encryptedFile = file.filename + '.dat';
     var key = new oid();
     fs.writeFile(fileKey, key);
-    encryptor.encryptFile(file, encryptedFile, key, (err) => fs.unlink(file));
+    encryptor.encryptFile(file.filename, encryptedFile, key, (err) => fs.unlink(file));
 }
 
 
@@ -49,21 +49,22 @@ var upload = multer({ storage: storage, fileFilter : FileFilter });
 
 
 router.post('/', authenticate.verifyUser, upload.single('file'), (req, res, next) => {
+    encrypt(req.file);
     res.statusCode = 200;
     res.setHeader('Content-type', 'application/json');
     res.json({ success: true });
 })
 
 router.get('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../public/images/userPH.png'));
+    res.sendFile(path.join(__dirname, '../public/files/userPH.png'));
 })
 
 router.get('/:id', (req, res, next) => {
-    if (fs.existsSync(path.join(__dirname, '../public/images', req.params.id))) {
-        res.sendFile(path.join(__dirname, '../public/images', req.params.id));
+    if (fs.existsSync(path.join(__dirname, '../public/files', req.params.id))) {
+        res.sendFile(path.join(__dirname, '../public/files', req.params.id));
     }
     else {
-        res.sendFile(path.join(__dirname, '../public/images/userPH.png'));
+        res.sendFile(path.join(__dirname, '../public/files/userPH.png'));
     }
 })
 
