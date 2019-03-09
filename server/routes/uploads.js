@@ -8,6 +8,8 @@ var fs = require('fs');
 var encryptor = require('file-encryptor');
 var oid = require('mongoose').Types.ObjectId;
 var File = require('../models/files');
+var User = require('../models/users');
+var msg = require('../messages')
 
 var authenticate = require('../authenticate');
 router.use(bodyParser.json());
@@ -38,7 +40,9 @@ var encrypt = (file) => {
     var key = new oid().toString();
 
     fs.writeFileSync(fileKey, key)
-    encryptor.encryptFile(fn, encryptedFile, key, (err) => fs.unlink(fn))
+    encryptor.encryptFile(fn, encryptedFile, key, {}, (err) => {
+        fs.unlinkSync(fn)
+    })
 }
 
 
@@ -48,12 +52,67 @@ var FileFilter = (req, file, cb) => {
 
 var upload = multer({ storage: storage, fileFilter: FileFilter });
 
-
 router.post('/', authenticate.verifyUser, upload.single('file'), (req, res, next) => {
     encrypt(req.file);
     res.statusCode = 200;
     res.setHeader('Content-type', 'application/json');
     res.json({ success: true });
+})
+
+router.post('/update/makepublic/:fid', authenticate.verifyUser, upload.single('file'), async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $set: { isPublic: true } }
+            )
+            res.json(msg.sucess)
+        }
+        throw new Error("Unauth")
+    }
+    catch (err) {
+        res.json(msg.failure)
+        throw err;
+    }
+})
+
+router.post('/update/share/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            var eid = req.body.email;
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $addToSet: { shared: eid } }
+            )
+            res.json(msg.sucess)
+        }
+        throw new Error("Unauthorized")
+    }
+    catch (err) {
+        res.json(msg.failure)
+        throw err;
+    }
+})
+
+router.post('/update/remove/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            var eid = req.body.email;
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $pull: { shared: eid } }
+            )
+            res.json(msg.sucess)
+        }
+        throw new Error("Unauthorized")
+    }
+    catch (err) {
+        res.json(msg.failure)
+        throw err;
+    }
 })
 
 router.get('/', (req, res, next) => {

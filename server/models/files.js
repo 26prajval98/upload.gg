@@ -13,9 +13,7 @@ var Files = new Schema({
         default: true
     },
     owner: mongoose.Types.ObjectId,
-    shared: [{
-        uid: mongoose.Types.ObjectId
-    }]
+    shared: [String]
 }, {
         timestamps: true
     });
