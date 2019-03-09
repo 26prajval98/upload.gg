@@ -15,6 +15,37 @@ router.get('/', (req, res, next) => {
     res.json(msg.sucess);
 })
 
+router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var file = req.params.fid;
+        var fo = await File.findOne({ _id: file });
+        if (fo) {
+            if (!fo.owner.equals(req.user._id)) {
+                var m = { ...msg};
+                m.msg = "Unauthorized to delete"
+                res.json(m)
+            }
+
+            if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
+                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".data"))
+                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".key"))
+                await File.deleteOne({ _id: file });
+                res.json(msg.sucess)
+            }
+            else {
+                res.json(msg.failure)
+            }
+        }
+        else {
+            throw new Error("File does not exist")
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.json(msg.failure)
+    }
+})
+
 router.get('/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
         var file = req.params.fid;

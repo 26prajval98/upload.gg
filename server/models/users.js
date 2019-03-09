@@ -5,13 +5,18 @@ var passportLocalMongoose = require('passport-local-mongoose');
 var Schema = mongoose.Schema;
 
 var Users = new Schema({
-    facebookId :{
-        type:String,
+    type: {
+        type: String,
+        enum: ['S', 'P'],
+        default : 'S'
+    },
+    facebookId: {
+        type: String,
     }
-},{
-    timestamps: true
-});
+}, {
+        timestamps: true
+    });
 
 Users.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('Users',Users);
+module.exports = mongoose.model('Users', Users);

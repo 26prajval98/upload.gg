@@ -47,19 +47,45 @@ var encrypt = (file) => {
 
 
 var FileFilter = (req, file, cb) => {
+    console.log(file);
     return cb(null, true);
 };
 
-var upload = multer({ storage: storage, fileFilter: FileFilter });
+var middleware = async (req, res, next) => {
+    try {
+        var MB = 1024 * 1024;
+        req.user.limit = 25 * MB;
+        if (req.user.type == "P")
+            req.user.limit = 50 * MB
 
-router.post('/', authenticate.verifyUser, upload.single('file'), (req, res, next) => {
-    encrypt(req.file);
-    res.statusCode = 200;
-    res.setHeader('Content-type', 'application/json');
-    res.json({ success: true });
+        var c = await File.find({ owner: req.user._id }).countDocuments();
+
+        if ((req.user.type != "P") && c >= 5) {
+            var m = msg.failure;
+            m.msg = "Upload limit reached";
+            res.json(m)
+        }
+        else {
+            next()
+        }
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+router.post('/', authenticate.verifyUser, middleware, (req, res, next) => {
+    var upload = multer({ storage: storage, fileFilter: FileFilter, limits: { fileSize: req.user.limit } });
+    upload.single('file')(req, res, (err) => {
+        if (err) next(err)
+        encrypt(req.file);
+        res.statusCode = 200;
+        res.setHeader('Content-type', 'application/json');
+        res.json({ success: true });
+    })
 })
 
-router.post('/update/makepublic/:fid', authenticate.verifyUser, upload.single('file'), async (req, res, next) => {
+router.post('/update/makepublic/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
         var f = File.findOne({ _id: req.params.fid });
         if (f.owner.equals(req.user._id)) {
