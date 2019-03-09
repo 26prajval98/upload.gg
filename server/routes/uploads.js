@@ -23,7 +23,7 @@ var storage = multer.diskStorage({
             owner: req.user._id
         })
             .then(ft => {
-                cb(null, ft._id)
+                cb(null, ft._id.toString())
             })
             .catch(err => {
                 throw err;
@@ -32,19 +32,21 @@ var storage = multer.diskStorage({
 })
 
 var encrypt = (file) => {
-    var fileKey = file.filename + '.key';
-    var encryptedFile = file.filename + '.dat';
-    var key = new oid();
-    fs.writeFile(fileKey, key);
-    encryptor.encryptFile(file.filename, encryptedFile, key, (err) => fs.unlink(file));
+    var fileKey = path.join(__dirname, '../public/files/', file.filename + '.key');
+    var fn = path.join(__dirname, '../public/files/', file.filename);
+    var encryptedFile = path.join(__dirname, '../public/files/', file.filename + '.dat');
+    var key = new oid().toString();
+
+    fs.writeFileSync(fileKey, key)
+    encryptor.encryptFile(fn, encryptedFile, key, (err) => fs.unlink(fn))
 }
 
 
-var FileFilter = (req, file, cb)=>{
+var FileFilter = (req, file, cb) => {
     return cb(null, true);
 };
 
-var upload = multer({ storage: storage, fileFilter : FileFilter });
+var upload = multer({ storage: storage, fileFilter: FileFilter });
 
 
 router.post('/', authenticate.verifyUser, upload.single('file'), (req, res, next) => {
