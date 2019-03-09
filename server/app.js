@@ -6,10 +6,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var passport = require('passport');
-var authenticate = require('./authenticate');
 var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var ExtractJwt = require('passport-jwt').ExtractJwt;
 
 var config = require('./config');
 var index = require('./routes/index');
