@@ -19,12 +19,11 @@ var storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         File.create({
-            name: file.filename,
+            name: file.originalname,
             owner: req.user._id
         })
-            .then(file => {
-                console.log(file.name);
-                cb(null, "abcd")
+            .then(ft => {
+                cb(null, ft._id)
             })
             .catch(err => {
                 throw err;
