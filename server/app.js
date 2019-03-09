@@ -12,6 +12,7 @@ var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var uploads = require('./routes/uploads');
+var file = require('./routes/file');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -58,6 +59,7 @@ app.use(passport.initialize());
 app.use('/', index);
 app.use('/users', users);
 app.use('/uploads', uploads);
+app.use('/file', file);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

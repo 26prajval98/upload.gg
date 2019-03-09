@@ -34,15 +34,18 @@ router.get('/:fid', authenticate.verifyUser, async (req, res, next) => {
                 encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
                     if (err)
                         throw err;
-                    res.download(path.join(__dirname, '../public/decrypt', fname));
-                    fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+                    res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
+                        if (err)
+                            throw err;
+                        fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+                    });
                 })
             }
             else {
                 res.json(msg.failure)
             }
         }
-        else{
+        else {
             throw new Error("File does not exist")
         }
     }
