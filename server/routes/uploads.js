@@ -41,11 +41,11 @@ var encrypt = (file) => {
 }
 
 
-// var imageFileFilter = (req, file, cb)=>{
-//     return cb(null, true);
-// };
+var FileFilter = (req, file, cb)=>{
+    return cb(null, true);
+};
 
-var upload = multer({ storage: storage });
+var upload = multer({ storage: storage, fileFilter : FileFilter });
 
 
 router.post('/', authenticate.verifyUser, upload.single('file'), (req, res, next) => {

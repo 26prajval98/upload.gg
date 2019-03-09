@@ -5,15 +5,16 @@ var Schema = mongoose.Schema;
 
 var Files = new Schema({
     name: {
-        type: String
+        type: String,
+        required : true
     },
-    isPublic : {
+    isPublic: {
         type: Boolean,
         default: true
     },
-    owner : mongoose.Types.ObjectId,
+    owner: mongoose.Types.ObjectId,
     shared: [{
-        uid : mongoose.Types.ObjectId
+        uid: mongoose.Types.ObjectId
     }]
 }, {
         timestamps: true
