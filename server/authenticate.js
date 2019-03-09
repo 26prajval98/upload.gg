@@ -1,4 +1,5 @@
 var passport = require('passport');
+var CutsomStrategy = passport.Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 var JWTStrategy = require('passport-jwt').Strategy;
 var ExtractJWT = require('passport-jwt').ExtractJwt;
@@ -9,18 +10,38 @@ var FacebookTokenStrategy = require('passport-facebook-token');
 
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 
-exports.getToken = (user)=>{
-    return jwt.sign(user, config.secretKey,{expiresIn: 24*60*60});     
+exports.getToken = (user) => {
+    return jwt.sign(user, config.secretKey, { expiresIn: 24 * 60 * 60 });
 }
 
 var opts = {};
-opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
+
+var cookieStrategy = () => {
+    return (request) => {
+        var x = request.headers.cookie;
+        if (x) {
+            x = x.split(";");
+            var y = {};
+            for (var i = 0; i < x.length; i++) {
+                var t = x[i].split("=");
+                y.name = t[0];
+                y.val = t[1];
+                if (y.name == "uploadgg")
+                    return y.val;
+            }
+        }
+        return ExtractJWT.fromAuthHeaderAsBearerToken()(request);
+    }
+}
+
+opts.jwtFromRequest = cookieStrategy();
+
 opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(new JWTStrategy(opts,
     (jwt_payload, done) => {
         console.log("JWT payload: ", jwt_payload);
-        User.findOne({_id: jwt_payload._id}, (err, user) => {
+        User.findOne({ _id: jwt_payload._id }, (err, user) => {
             if (err) {
                 return done(err, false);
             }
@@ -33,7 +54,7 @@ exports.jwtPassport = passport.use(new JWTStrategy(opts,
         });
     }));
 
-exports.verifyUser = passport.authenticate('jwt', {session: false});
+exports.verifyUser = passport.authenticate('jwt', { session: false });
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -42,7 +63,7 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
     clientID: config.facebook.clientId,
     clientSecret: config.facebook.clientSecret
 }, (accessToken, refreshToken, profile, done) => {
-    User.findOne({facebookId: profile.id}, (err, user) => {
+    User.findOne({ facebookId: profile.id }, (err, user) => {
         console.log(profile);
         if (err) {
             return done(err, false);
@@ -50,8 +71,8 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
         if (!err && user !== null) {
             return done(null, user);
         }
-        else{
-            User.findOne({username: profile.emails[0].value}, (err,user)=>{
+        else {
+            User.findOne({ username: profile.emails[0].value }, (err, user) => {
                 if (err) {
                     return done(err, false);
                 }
@@ -64,8 +85,8 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
                             return done(null, user);
                     })
                 }
-                else{
-                    user = new User({ username: profile.emails[0].value});
+                else {
+                    user = new User({ username: profile.emails[0].value });
                     user.facebookId = profile.id;
                     user.save((err, user) => {
                         if (err)

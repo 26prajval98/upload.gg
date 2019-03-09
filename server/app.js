@@ -8,11 +8,17 @@ mongoose.Promise = require('bluebird');
 var passport = require('passport');
 var authenticate = require('./authenticate');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 
 var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var uploads = require('./routes/uploads');
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 mongoose.connect(config.uri)
   .then((db) => {
@@ -44,14 +50,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(cookieParser('abcdefg'));
-app.use(session({
-  secret: 'abcdefg',
-  resave: true,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(cookieParser('uploadgg'));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

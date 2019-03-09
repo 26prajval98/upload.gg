@@ -8,10 +8,10 @@ var authenticate = require('../authenticate');
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.get('/',authenticate.verifyUser, function(req, res, next) {
+router.get('/', authenticate.verifyUser, function(req, res, next) {
   res.setHeader('Content-type', 'application/json');
   res.json({username:req.user.username, about:req.user.about});
-}); 
+});
 
 router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
   if (req.user) {
@@ -41,6 +41,7 @@ router.post('/signup',(req,res,next)=>{
 
 router.post('/login', passport.authenticate('local'), (req,res)=>{
   var token = authenticate.getToken({_id: req.user._id});
+  res.cookie('uploadgg', token);
   res.setHeader('Content-type', 'application/json');
   res.statusCode = 200;
   console.log('Sending Back');

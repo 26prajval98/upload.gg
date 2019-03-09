@@ -8,12 +8,14 @@ var Files = new Schema({
     name: {
         type: String
     },
-    isPublic = {
+    isPublic : {
         type: Boolean,
         default: true
     },
     owner : mongoose.Types.ObjectId,
-    shared: [mongoose.Types.ObjectId]
+    shared: [{
+        uid : mongoose.Types.ObjectId
+    }]
 }, {
         timestamps: true
     });
