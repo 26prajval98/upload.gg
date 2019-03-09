@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var cookieParser = require('cookie-parser');
 
 var config = require('./config');
 var index = require('./routes/index');
@@ -14,18 +15,18 @@ var users = require('./routes/users');
 var uploads = require('./routes/uploads');
 
 mongoose.connect(config.uri)
-.then((db)=>{
-  console.log('Connected Successfully');
-})
+  .then((db) => {
+    console.log('Connected Successfully');
+  })
 
 var app = express();
 
-app.all('*', (req,res,next)=>{
-  if(req.secure){
+app.all('*', (req, res, next) => {
+  if (req.secure) {
     return next();
   }
-  else{
-    res.redirect('https://'+ req.hostname + ':' + app.get('securePort') + req.url);
+  else {
+    res.redirect('https://' + req.hostname + ':' + app.get('securePort') + req.url);
   }
 });
 
@@ -36,14 +37,21 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
-
+app.use(cookieParser('abcdefg'));
+app.use(session({
+  secret: 'abcdefg',
+  resave: true,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,14 +65,14 @@ app.use('/uploads', uploads);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
