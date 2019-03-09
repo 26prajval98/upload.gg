@@ -36,7 +36,7 @@ var storage = multer.diskStorage({
 var encrypt = (file) => {
     var fileKey = path.join(__dirname, '../public/files/', file.filename + '.key');
     var fn = path.join(__dirname, '../public/files/', file.filename);
-    var encryptedFile = path.join(__dirname, '../public/files/', file.filename + '.dat');
+    var encryptedFile = path.join(__dirname, '../public/files/', file.filename + '.data');
     var key = new oid().toString();
 
     fs.writeFileSync(fileKey, key)
@@ -69,7 +69,7 @@ router.post('/update/makepublic/:fid', authenticate.verifyUser, upload.single('f
             )
             res.json(msg.sucess)
         }
-        throw new Error("Unauth")
+        throw new Error("Unauthorized")
     }
     catch (err) {
         res.json(msg.failure)
@@ -120,11 +120,9 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/:id', (req, res, next) => {
-    if (fs.existsSync(path.join(__dirname, '../public/files', req.params.id))) {
-        res.sendFile(path.join(__dirname, '../public/files', req.params.id));
-    }
-    else {
-        res.sendFile(path.join(__dirname, '../public/files/userPH.png'));
+    var file = req.params.fid + ".data";
+    if (fs.existsSync(path.join(__dirname, '../public/files', file))){
+        res.download(path.join(__dirname, '../public/files', file));
     }
 })
 
