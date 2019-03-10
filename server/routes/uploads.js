@@ -1,14 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
-var passport = require('passport');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 var encryptor = require('file-encryptor');
 var oid = require('mongoose').Types.ObjectId;
 var File = require('../models/files');
-var User = require('../models/users');
 var msg = require('../messages')
 
 var authenticate = require('../authenticate');
@@ -47,7 +45,6 @@ var encrypt = (file) => {
 
 
 var FileFilter = (req, file, cb) => {
-    console.log(file);
     return cb(null, true);
 };
 

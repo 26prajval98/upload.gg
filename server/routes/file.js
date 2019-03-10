@@ -15,33 +15,35 @@ router.get('/', (req, res, next) => {
     res.json(msg.sucess);
 })
 
-router.get('download/:fid', async (req, res, next) => {
+router.get('/download/:fid', async (req, res, next) => {
     try {
         var file = req.params.fid;
         var fo = await File.findOne({ _id: file });
         if (fo) {
             if (!fo.isPublic) {
-                // res.json({ ...msg.failure, msg:"File is not public"});
-                res.redirect(`/file/${file}`)
-            }
-            if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
-                var milliseconds = new Date().getTime();
-                var timestamp = (milliseconds.toString());
-                var f = await File.findOne({ _id: file })
-                var fname = timestamp + f.name;
-                var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
-                encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
-                    if (err)
-                        throw err;
-                    res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
-                        if (err)
-                            throw err;
-                        fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
-                    });
-                })
+                res.json({ ...msg.failure, msg:"File is not public"});
+                // res.redirect(`/file/${file}`)
             }
             else {
-                res.json(msg.failure)
+                if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
+                    var milliseconds = new Date().getTime();
+                    var timestamp = (milliseconds.toString());
+                    var f = await File.findOne({ _id: file })
+                    var fname = timestamp + f.name;
+                    var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
+                    encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
+                        if (err)
+                            throw err;
+                        res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
+                            if (err)
+                                throw err;
+                            fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+                        });
+                    })
+                }
+                else {
+                    res.json(msg.failure)
+                }
             }
         }
         else {
@@ -125,17 +127,21 @@ router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
     }
 })
 
-router.get('/makepublic/:fid', authenticate.verifyUser, async (req, res, next) => {
+router.post('/makepublic/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
-        var f = File.findOne({ _id: req.params.fid });
-        if (f.owner.equals(req.user._id)) {
-            await File.updateOne(
-                { _id: req.params.fid },
-                { $set: { isPublic: true } }
-            )
-            res.json(msg.sucess)
+        var f = await File.findOne({ _id: req.params.fid });
+        if (f) {
+            if (f.owner.equals(req.user._id)) {
+                await File.updateOne(
+                    { _id: req.params.fid },
+                    { $set: { isPublic: req.body.isPublic } }
+                )
+                res.json(msg.sucess)
+            }
+            else {
+                res.json({ ...msg.failure, msg: "Unauthorized" })
+            }
         }
-        res.json({ ...msg.failure, msg: "Unauthorized" })
     }
     catch (err) {
         res.json({ ...msg.failure })
@@ -145,7 +151,7 @@ router.get('/makepublic/:fid', authenticate.verifyUser, async (req, res, next) =
 
 router.post('/share/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
-        var f = File.findOne({ _id: req.params.fid });
+        var f = await File.findOne({ _id: req.params.fid });
         if (f.owner.equals(req.user._id)) {
             var eid = req.body.email;
             await File.updateOne(
@@ -164,7 +170,7 @@ router.post('/share/:fid', authenticate.verifyUser, async (req, res, next) => {
 
 router.post('/remove/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
-        var f = File.findOne({ _id: req.params.fid });
+        var f = await File.findOne({ _id: req.params.fid });
         if (f.owner.equals(req.user._id)) {
             var eid = req.body.email;
             await File.updateOne(
