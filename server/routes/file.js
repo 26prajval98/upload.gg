@@ -15,35 +15,40 @@ router.get('/', (req, res, next) => {
     res.json(msg.sucess);
 })
 
-router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
+router.get('download/:fid', async (req, res, next) => {
     try {
         var file = req.params.fid;
         var fo = await File.findOne({ _id: file });
         if (fo) {
-            if (!fo.owner.equals(req.user._id)) {
-                var m = { ...msg.failure };
-                m.msg = "Unauthorized to delete"
-                res.json(m)
+            if (!fo.isPublic) {
+                // res.json({ ...msg.failure, msg:"File is not public"});
+                res.redirect(`/file/${file}`)
             }
-
             if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
-                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".data"))
-                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".key"))
-                await File.deleteOne({ _id: file });
-                res.json(msg.sucess)
+                var milliseconds = new Date().getTime();
+                var timestamp = (milliseconds.toString());
+                var f = await File.findOne({ _id: file })
+                var fname = timestamp + f.name;
+                var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
+                encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
+                    if (err)
+                        throw err;
+                    res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
+                        if (err)
+                            throw err;
+                        fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+                    });
+                })
             }
             else {
                 res.json(msg.failure)
             }
         }
         else {
-            var m = { ...msg.failure };
-            m.msg = "File does not exist"
-            res.json(m)
+            res.json({ ...msg.failure, msg: "File does not exist" })
         }
     }
     catch (err) {
-        console.log(err)
         res.json(msg.failure)
     }
 })
@@ -87,41 +92,92 @@ router.get('/:fid', authenticate.verifyUser, async (req, res, next) => {
     }
 })
 
-router.get('download/:fid', async (req, res, next) => {
+router.get('/delete/:fid', authenticate.verifyUser, async (req, res, next) => {
     try {
         var file = req.params.fid;
         var fo = await File.findOne({ _id: file });
         if (fo) {
-            if (!fo.isPublic) {
-                // res.json({ ...msg.failure, msg:"File is not public"});
-                res.redirect(`/file/${file}`)
+            if (!fo.owner.equals(req.user._id)) {
+                var m = { ...msg.failure };
+                m.msg = "Unauthorized to delete"
+                res.json(m)
             }
+
             if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
-                var milliseconds = new Date().getTime();
-                var timestamp = (milliseconds.toString());
-                var f = await File.findOne({ _id: file })
-                var fname = timestamp + f.name;
-                var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
-                encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
-                    if (err)
-                        throw err;
-                    res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
-                        if (err)
-                            throw err;
-                        fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
-                    });
-                })
+                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".data"))
+                fs.unlinkSync(path.join(__dirname, '../public/files', file + ".key"))
+                await File.deleteOne({ _id: file });
+                res.json(msg.sucess)
             }
             else {
                 res.json(msg.failure)
             }
         }
         else {
-            res.json({ ...msg.failure, msg: "File does not exist" })
+            var m = { ...msg.failure };
+            m.msg = "File does not exist"
+            res.json(m)
         }
     }
     catch (err) {
+        console.log(err)
         res.json(msg.failure)
+    }
+})
+
+router.get('/makepublic/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $set: { isPublic: true } }
+            )
+            res.json(msg.sucess)
+        }
+        res.json({ ...msg.failure, msg: "Unauthorized" })
+    }
+    catch (err) {
+        res.json({ ...msg.failure })
+        throw err;
+    }
+})
+
+router.post('/share/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            var eid = req.body.email;
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $addToSet: { shared: eid } }
+            )
+            res.json(msg.sucess)
+        }
+        res.json({ ...msg.failure, msg: "Unauthorized" })
+    }
+    catch (err) {
+        res.json(msg.failure)
+        throw err;
+    }
+})
+
+router.post('/remove/:fid', authenticate.verifyUser, async (req, res, next) => {
+    try {
+        var f = File.findOne({ _id: req.params.fid });
+        if (f.owner.equals(req.user._id)) {
+            var eid = req.body.email;
+            await File.updateOne(
+                { _id: req.params.fid },
+                { $pull: { shared: eid } }
+            )
+            res.json(msg.sucess)
+        }
+        res.json({ ...msg.failure, msg: "Unauthorized" })
+    }
+    catch (err) {
+        res.json(msg.failure)
+        throw err;
     }
 })
 
