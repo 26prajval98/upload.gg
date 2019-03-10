@@ -21,7 +21,7 @@ router.get('/download/:fid', async (req, res, next) => {
         var fo = await File.findOne({ _id: file });
         if (fo) {
             if (!fo.isPublic) {
-                res.json({ ...msg.failure, msg:"File is not public"});
+                res.json({ ...msg.failure, msg: "File is not public" });
                 // res.redirect(`/file/${file}`)
             }
             else {
@@ -160,7 +160,9 @@ router.post('/share/:fid', authenticate.verifyUser, async (req, res, next) => {
             )
             res.json(msg.sucess)
         }
-        res.json({ ...msg.failure, msg: "Unauthorized" })
+        else {
+            res.json({ ...msg.failure, msg: "Unauthorized" })
+        }
     }
     catch (err) {
         res.json(msg.failure)
@@ -179,7 +181,9 @@ router.post('/remove/:fid', authenticate.verifyUser, async (req, res, next) => {
             )
             res.json(msg.sucess)
         }
-        res.json({ ...msg.failure, msg: "Unauthorized" })
+        else{
+            res.json({ ...msg.failure, msg: "Unauthorized" })
+        }
     }
     catch (err) {
         res.json(msg.failure)
