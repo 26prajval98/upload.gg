@@ -79,7 +79,45 @@ router.get('/:fid', authenticate.verifyUser, async (req, res, next) => {
             }
         }
         else {
-            res.json({...msg.failure, msg : "File does not exist"})
+            res.json({ ...msg.failure, msg: "File does not exist" })
+        }
+    }
+    catch (err) {
+        res.json(msg.failure)
+    }
+})
+
+router.get('download/:fid', async (req, res, next) => {
+    try {
+        var file = req.params.fid;
+        var fo = await File.findOne({ _id: file });
+        if (fo) {
+            if (!fo.isPublic) {
+                // res.json({ ...msg.failure, msg:"File is not public"});
+                res.redirect(`/file/${file}`)
+            }
+            if (fs.existsSync(path.join(__dirname, '../public/files', file + ".data"))) {
+                var milliseconds = new Date().getTime();
+                var timestamp = (milliseconds.toString());
+                var f = await File.findOne({ _id: file })
+                var fname = timestamp + f.name;
+                var key = fs.readFileSync(path.join(__dirname, '../public/files', file + ".key"));
+                encryptor.decryptFile(path.join(__dirname, '../public/files', file + ".data"), path.join(__dirname, '../public/decrypt', fname), key, (err) => {
+                    if (err)
+                        throw err;
+                    res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
+                        if (err)
+                            throw err;
+                        fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
+                    });
+                })
+            }
+            else {
+                res.json(msg.failure)
+            }
+        }
+        else {
+            res.json({ ...msg.failure, msg: "File does not exist" })
         }
     }
     catch (err) {
