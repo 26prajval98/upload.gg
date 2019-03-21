@@ -10,7 +10,8 @@ var Files = new Schema({
     },
     isPublic: {
         type: Boolean,
-        default: true
+        default: true,
+        enum : [true, false]
     },
     owner: mongoose.Types.ObjectId,
     shared: [String]
