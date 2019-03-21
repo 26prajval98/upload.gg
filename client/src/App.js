@@ -5,9 +5,11 @@ import component from './components'
 class App extends Component {
 	render() {
 		return (
-			<div className="App">
+			<div>
 				<Router>
-					<Route exact path="/" component={component.home}/>
+					<Route exact path="/" component={component.home} />
+					<Route exact path="/about" component={component.about} />
+					<Route exact path="/services" component={component.services} />
 				</Router>
 			</div>
 		);
