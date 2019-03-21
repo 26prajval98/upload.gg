@@ -3,9 +3,10 @@ var router = express.Router();
 var path = require('path');
 
 /* GET home page. */
-router.get('/',(req, res, next)=> {
-    console.log(req.user)
-    res.sendFile(path.join(__dirname, '../','index.html'));
+router.get('/', (req, res, next) => {
+    res.json({
+        success: true
+    })
 });
 
 module.exports = router;
