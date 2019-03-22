@@ -30,14 +30,12 @@ const httpPost = (path, data, auth) => {
         return axios.post(url + path, qs.stringify(data), {
             headers: {
                 // 'Authorization': "Bearer " + getCookie("token"),
-                'cache-control': null,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
     else
         return axios.post(url + path, qs.stringify(data), {
             headers: {
-                'cache-control': null,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
