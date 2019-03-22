@@ -60,7 +60,7 @@ var middleware = async (req, res, next) => {
 		if ((req.user.type != "P") && c >= 5) {
 			var m = { ...msg.failure };
 			m.msg = "Upload limit reached";
-			res.json(m)
+			res.json(m)	
 		}
 		else {
 			next()
@@ -74,11 +74,15 @@ var middleware = async (req, res, next) => {
 router.post('/', authenticate.verifyUser, middleware, (req, res, next) => {
 	var upload = multer({ storage: storage, fileFilter: FileFilter, limits: { fileSize: req.user.limit } });
 	upload.single('file')(req, res, (err) => {
-		if (err) next(err)
-		encrypt(req.file);
-		res.statusCode = 200;
-		res.setHeader('Content-type', 'application/json');
-		res.json({ success: true });
+		if (err) {
+			next(err)
+		}
+		else {
+			encrypt(req.file);
+			res.statusCode = 200;
+			res.setHeader('Content-type', 'application/json');
+			res.json({ success: true });
+		}
 	})
 })
 

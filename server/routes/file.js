@@ -14,7 +14,6 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.get('/', authenticate.verifyUser, async (req, res, next) => {
 	try {
 		var fo = await File.find({ owner: req.user._id });
-		console.log(fo)
 		var op;
 		if (!fo)
 			op = []
