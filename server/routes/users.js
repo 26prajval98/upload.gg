@@ -23,7 +23,6 @@ router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res
 });
 
 router.post('/signup', (req, res, next) => {
-	console.log(req.body.username);
 	User.register(new User({ username: req.body.username }), req.body.password, (err) => {
 		if (err) {
 			res.statusCode = 500;
