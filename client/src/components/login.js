@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import constants from '../constants'
+import { httpPost } from '../methods/axios'
+import setCookie from '../methods/cookie';
 
 export default class login extends Component {
     constructor(props) {
@@ -7,31 +9,38 @@ export default class login extends Component {
         this.state = {
             username: "",
             password: "",
-            error : constants.nil
+            error: constants.nil
         }
     }
 
-    submit(){
-        var url = "https://localhost:8000";
-        var data = { ...this.state}
-        fetch(url + "/users/login", {
-            method : "POST",
-            body : JSON.stringify(data)
-        })
-        .then(res => {
-            if(res.status !== 200){
+    submit() {
+        var data = { ...this.state }
+        httpPost("/users/login", data, 0)
+            .then(res => {
+                if (res.status !== 200) {
+                    console.log(constants.login.invalid)
+                    window.setAlert(constants.login.invalid)
+                    this.setState({
+                        error: constants.login.invalid
+                    })
+                }
+                else {
+                    this.setState({
+                        error: constants.nil,
+                        username: constants.nil,
+                        password: constants.nil
+                    })
+                    setCookie(res.data.token, 10);
+                    window.location = "/user"
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                window.setAlert(constants.login.invalid)
                 this.setState({
-                    error : constants.login.invalid
+                    error: constants.login.invalid
                 })
-            }
-            else{
-                this.setState({
-                    error : constants.nil,
-                    username : constants.nil,
-                    password : constants.nil
-                })
-            }
-        })
+            })
     }
 
     render() {
@@ -45,13 +54,13 @@ export default class login extends Component {
                                 <span className="focus-input100"></span>
                             </div>
                             <div className="wrap-input100 validate-input m-b-16">
-                                <input className="input100" type="password" name="password" placeholder="Password" value={this.state.password} onChange={(e)=>{this.setState({ password: e.target.value })}} required />
+                                <input className="input100" type="password" name="password" placeholder="Password" value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }) }} required />
                                 <span className="focus-input100"></span>
                                 <span className="symbol-input100"><span className="lnr lnr-lock"></span></span>
                             </div>
                         </div>
                         <div className="container-login100-form-btn p-t-10">
-                            <button className="login100-form-btn" onClick={(e)=>{this.submit()}}>Login</button>
+                            <button className="login100-form-btn" onClick={(e) => { this.submit() }}>Login</button>
                         </div>
 
                         <div className="text-center w-full p-t-20">

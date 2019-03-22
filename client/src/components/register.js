@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import constants from '../constants'
-import { httpPost } from '../axios'
+import { httpPost } from '../methods/axios'
 
 export default class login extends Component {
     constructor(props) {
@@ -19,19 +19,21 @@ export default class login extends Component {
             .then(res => {
                 if (res.status !== 200) {
                     this.setState({
-                        error: constants.login.invalid
+                        error: constants.signup.invalid
                     })
+                    window.setAlert(constants.signup.invalid)
                 }
                 else {
                     this.setState({
-                        error: "Registration not successfull",
+                        error: constants.nil,
                         username: constants.nil,
                         password: constants.nil
                     })
-                    window.location = "/user";
+                    window.setAlert(constants.signup.valid)
                 }
             })
             .catch(err => {
+                window.setAlert(constants.signup.invalid)
                 console.log(err)
             })
     }
