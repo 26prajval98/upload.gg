@@ -7,20 +7,21 @@ import constants from '../constants'
 var url = constants.baseurl;
 
 const httpGet = (path) => {
-    return axios.get(url + path, {
-        headers: {
-            Authorization: "Bearer " + getCookie("uploadgg"),
-            'cache-control': 'no-cache',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
+    if (getCookie("uploadgg"))
+        return axios.get(url + path, {
+            headers: {
+                Authorization: "Bearer " + getCookie("uploadgg"),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+    else
+        window.location = "/"
 }
 
 const httpDelete = (path) => {
     return axios.delete(url + path, {
         headers: {
             'Authorization': "Bearer " + getCookie("uploadgg"),
-            'cache-control': 'no-cache',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     })

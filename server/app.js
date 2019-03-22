@@ -59,7 +59,7 @@ app.use(passport.initialize());
 app.use('/', index);
 app.use('/users', users);
 app.use('/uploads', uploads);
-app.use('/file', file);
+app.use('/files', file);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

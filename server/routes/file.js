@@ -11,8 +11,27 @@ var authenticate = require('../authenticate');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-router.get('/', (req, res, next) => {
-	res.json(msg.sucess);
+router.get('/', authenticate.verifyUser, async (req, res, next) => {
+	try {
+		var fo = await File.find({ owner: req.user._id });
+		console.log(fo)
+		var op;
+		if (!fo)
+			op = []
+		else if (!Array.isArray(fo))
+			op = [fo]
+		else
+			op = fo
+			
+		res.json({
+			files: op
+		})
+	}
+	catch(err) {
+		res.json({
+			files : []
+		})
+	}
 })
 
 router.get('/download/:fid', async (req, res, next) => {

@@ -3,13 +3,15 @@ import services from './services'
 import about from './about'
 import login from './login'
 import register from './register'
+import user from './user'
 
 var Component = {
     home,
     services,
     about,
     login,
-    register
+    register,
+    user
 }
 
 export default Component
