@@ -18,16 +18,8 @@ var storage = multer.diskStorage({
 		cb(null, 'public/files');
 	},
 	filename: (req, file, cb) => {
-		File.create({
-			name: file.originalname,
-			owner: req.user._id
-		})
-			.then(ft => {
-				cb(null, ft._id.toString())
-			})
-			.catch(err => {
-				throw err;
-			})
+		req.fid = new oid()
+		cb(null, req.fid.toString())
 	}
 })
 
@@ -60,7 +52,7 @@ var middleware = async (req, res, next) => {
 		if ((req.user.type != "P") && c >= 5) {
 			var m = { ...msg.failure };
 			m.msg = "Upload limit reached";
-			res.json(m)	
+			res.json(m)
 		}
 		else {
 			next()
@@ -75,13 +67,23 @@ router.post('/', authenticate.verifyUser, middleware, (req, res, next) => {
 	var upload = multer({ storage: storage, fileFilter: FileFilter, limits: { fileSize: req.user.limit } });
 	upload.single('file')(req, res, (err) => {
 		if (err) {
-			next(err)
+			next(err);
 		}
 		else {
-			encrypt(req.file);
-			res.statusCode = 200;
-			res.setHeader('Content-type', 'application/json');
-			res.json({ success: true });
+			File.create({
+				_id: req.fid,
+				name: req.file.originalname,
+				owner: req.user._id
+			})
+				.then(() => {
+					encrypt(req.file);
+					res.statusCode = 200;
+					res.setHeader('Content-type', 'application/json');
+					res.json({ success: true });
+				})
+				.catch(err => {
+					throw err;
+				})
 		}
 	})
 })
