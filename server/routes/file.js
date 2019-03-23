@@ -21,14 +21,14 @@ router.get('/', authenticate.verifyUser, async (req, res, next) => {
 			op = [fo]
 		else
 			op = fo
-			
+
 		res.json({
 			files: op
 		})
 	}
-	catch(err) {
+	catch (err) {
 		res.json({
-			files : []
+			files: []
 		})
 	}
 })
@@ -188,7 +188,7 @@ router.post('/share/:fid', authenticate.verifyUser, async (req, res, next) => {
 	}
 })
 
-router.post('/remove/:fid', authenticate.verifyUser, async (req, res, next) => {
+router.post('/unshare/:fid', authenticate.verifyUser, async (req, res, next) => {
 	try {
 		var f = await File.findOne({ _id: req.params.fid });
 		if (f.owner.equals(req.user._id)) {

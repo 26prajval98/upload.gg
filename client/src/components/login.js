@@ -18,7 +18,6 @@ export default class login extends Component {
         httpPost("/users/login", data, 0)
             .then(res => {
                 if (res.status !== 200) {
-                    console.log(constants.login.invalid)
                     window.setAlert(constants.login.invalid)
                     this.setState({
                         error: constants.login.invalid
@@ -35,7 +34,6 @@ export default class login extends Component {
                 }
             })
             .catch(err => {
-                console.log(err)
                 window.setAlert(constants.login.invalid)
                 this.setState({
                     error: constants.login.invalid

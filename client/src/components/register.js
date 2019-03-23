@@ -34,7 +34,6 @@ export default class login extends Component {
             })
             .catch(err => {
                 window.setAlert(constants.signup.invalid)
-                console.log(err)
             })
     }
 
