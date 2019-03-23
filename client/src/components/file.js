@@ -49,7 +49,7 @@ export default class file extends Component {
 		return (
 			<div className="w3-panel">
 				<div className="w3-bar">
-					<span className="w3-bar-item w3-margin">{this.props.fname}</span>
+					<span className="w3-bar-item w3-margin" style={{maxWidth : "200px", width : "200px", overflowWrap: "break-word"}}>{this.props.fname}</span>
 					<a href={downURL} className="w3-button w3-green w3-bar-item w3-margin">Download</a>
 					<button onClick={this.deletefile.bind(this, this.props.fid)} className="w3-button w3-red w3-bar-item w3-margin">Delete</button>
 					<button onClick={this.showSettings.bind(this)} className="w3-button w3-blue w3-bar-item w3-margin">File Options</button>

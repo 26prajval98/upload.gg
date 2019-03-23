@@ -45,7 +45,7 @@ var middleware = async (req, res, next) => {
 		var MB = 1024 * 1024;
 		req.user.limit = 25 * MB;
 		if (req.user.type == "P")
-			req.user.limit = 50 * MB
+			req.user.limit = 1024 * MB
 
 		var c = await File.find({ owner: req.user._id }).countDocuments();
 

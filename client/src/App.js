@@ -20,7 +20,7 @@ class App extends Component {
 
 	showAlert() {
 		var alert = this.state.alert;
-		if (alert === constant.signup.valid)
+		if (alert === constant.signup.valid || alert === constant.upload.success || alert === constant.files.delete.success)
 			return (
 				<div className="w3-container w3-green w3-xlarge w3-padding">
 					<span className="w3-margin">{alert}</span>

@@ -40,7 +40,7 @@ export default class user extends Component {
 				})
 			})
 			.catch(err => {
-				deleteAll()
+				// deleteAll()
 			})
 	}
 
