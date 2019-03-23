@@ -18,8 +18,6 @@ export default class file extends Component {
 		var deletePath = "/files/delete/" + fid;
 		httpGet(deletePath)
 			.then(res => {
-				console.log(res)
-				window.setAlert(constant.files.delete.success);
 				this.props.updateState()
 			})
 			.catch(err => {
