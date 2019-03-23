@@ -4,6 +4,7 @@ import { deleteAll } from '../methods/cookie';
 import constant from '../constants';
 import File from './file'
 import '../css/loader.css'
+import rocket from '../images/home/rocket.png'
 
 var initial = {
 	loading: !constant.bool,
@@ -67,15 +68,15 @@ export default class user extends Component {
 			})
 	}
 
-	setLoading(){
+	setLoading() {
 		this.setState({
-			loading : true
+			loading: true
 		})
 	}
 
-	unsetLoading(){
+	unsetLoading() {
 		this.setState({
-			loading : false
+			loading: false
 		})
 	}
 
@@ -126,7 +127,12 @@ export default class user extends Component {
 		}
 		else {
 			return (
-				<div className="loader" />
+				<div className="w3-display-container" style={{ width: "100vw", height: "100vh" }}>
+					<div className="w3-display-middle loading-rocket w3-center">
+						<img src={rocket} alt="rocket" />
+						<p className="w3-jumbo">Loading...</p>
+					</div>
+				</div>
 			)
 		}
 	}

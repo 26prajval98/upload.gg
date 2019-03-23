@@ -630,6 +630,16 @@ ol {
 	animation: rocket 2s linear infinite;
 }
 
+.loading-rocket {
+	position: absolute;
+}
+
+.loading-rocket img {
+	position: relative;
+	-webkit-animation: rocket 2s linear infinite;
+	animation: rocket 2s linear infinite;
+}
+
 @-webkit-keyframes rocket {
 	0% {
 		left: 20px;
@@ -1470,6 +1480,9 @@ ol {
 	.hero-rocket {
 		width: 500px;
 	}
+	.loading-rocket {
+		width: 500px;
+	}
 	.pricing-plan .pricing-body {
 		padding: 54px 45px 52px;
 	}
@@ -1493,6 +1506,9 @@ ol {
 		margin-left: 20px;
 	}
 	.hero-rocket {
+		display: none;
+	}
+	.loading-rocket {
 		display: none;
 	}
 	.feature-item.fi-center-top .ft-icon {
@@ -1600,7 +1616,7 @@ ol {
 		border-top: 1px solid #efefef;
 		padding: 13px 35px;
 	}
-	.hero-rocket {
+	.loading-rocket {
 		display: none;
 	}
 	.feature-item.fi-center-top .ft-icon {
