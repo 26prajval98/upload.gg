@@ -81,8 +81,9 @@ export default class filesettings extends Component {
 			})
 	}
 
-	render() {
+	showFileSettings() {
 		return (
+
 			<div className="w3-show w3-modal">
 				<div className="w3-modal-content">
 					<header className="w3-container w3-purple w3-padding">
@@ -125,6 +126,14 @@ export default class filesettings extends Component {
 						</div>
 					</div>
 				</div>
+			</div>
+		)
+	}
+
+	render() {
+		return (
+			<div>
+				{this.showFileSettings()}
 			</div>
 		)
 	}

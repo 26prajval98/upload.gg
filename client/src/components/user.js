@@ -9,6 +9,7 @@ var initial = {
 	loading: !constant.bool,
 	username: constant.nil,
 	files: constant.arr,
+	type: "S",
 	dis: !constant.bool,
 	file: constant.null
 }
@@ -31,15 +32,17 @@ export default class user extends Component {
 	}
 
 	updateState() {
-		var username, files
+		var username, files, type
 		httpGet("/users")
 			.then(res => {
+				type = res.data.type
 				username = res.data.username
 				return httpGet("/files")
 			})
 			.then(res => {
 				files = res.data.files
 				this.setState({
+					type,
 					username,
 					files
 				})
@@ -52,13 +55,39 @@ export default class user extends Component {
 			})
 	}
 
+	switchPlan() {
+		window.setLoading()
+		var type = this.state.type === 'S' ? 'P' : 'S';
+		httpGet('/users/update/type/' + type)
+			.then(res => {
+				this.updateState()
+			})
+			.catch(err => {
+				window.setAlert(constant.ise)
+			})
+	}
+
+	setLoading(){
+		this.setState({
+			loading : true
+		})
+	}
+
+	unsetLoading(){
+		this.setState({
+			loading : false
+		})
+	}
+
 	componentWillMount() {
 		this.updateState()
+		window.setLoading = this.setLoading.bind(this)
+		window.unsetLoading = this.unsetLoading.bind(this)
 	}
 
 	loaded() {
 		if (!this.state.loading) {
-
+			var type = this.state.type === 'S' ? 'Standard' : 'Premium';
 			var btn = this.state.dis === true ? "w3-disabled" : "";
 			btn += " w3-button w3-green"
 			return (
@@ -66,6 +95,8 @@ export default class user extends Component {
 					<div className="w3-container">
 						<h1 className="w3-xxlarge" style={{ display: "inline" }}>Hello, {this.state.username}</h1>
 						<button className="w3-button w3-purple w3-right w3-large w3-margin" onClick={() => { deleteAll(); window.location = "/"; }}>Logout</button>
+						<button className="w3-button w3-teal w3-right w3-large w3-margin" onClick={() => { this.switchPlan(); }}>Switch Plan</button>
+						<h1 className="w3-xxlarge" >Current Plan : {type}</h1>
 					</div>
 					<div className="w3-col l6 m6 s12 w3-padding-16">
 						<div className="w3-container w3-center w3-padding-32">
@@ -95,7 +126,7 @@ export default class user extends Component {
 		}
 		else {
 			return (
-				<div className="loader"/>
+				<div className="loader" />
 			)
 		}
 	}

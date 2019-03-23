@@ -14,13 +14,16 @@ export default class file extends Component {
 	}
 
 	deletefile = (fid) => {
+		window.setLoading()
 		var deletePath = "/files/delete/" + fid;
 		httpGet(deletePath)
 			.then(res => {
+				console.log(res)
 				window.setAlert(constant.files.delete.success);
 				this.props.updateState()
 			})
 			.catch(err => {
+				window.unsetLoading()
 				window.setAlert(constant.ise);
 			})
 	}

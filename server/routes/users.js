@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 
 router.get('/', authenticate.verifyUser, function (req, res, next) {
 	res.setHeader('Content-type', 'application/json');
-	res.json({ username: req.user.username });
+	res.json(req.user);
 });
 
 router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {

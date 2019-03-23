@@ -48,6 +48,9 @@ const httpFile = (path, data) => {
 	var formData = new FormData()
 	formData.append("file", data)
 	return axios.post(url + path, formData, {
+		onUploadProgress : (e)=>{
+			console.log(e)
+		},
 		headers: {
 			'Authorization': "Bearer " + getCookie("uploadgg"),
 			'Content-Type': 'multipart/form-data'
