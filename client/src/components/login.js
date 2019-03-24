@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import constants from '../constants'
 import { httpPost } from '../methods/axios'
-import setCookie from '../methods/cookie';
+import setCookie, { getCookie } from '../methods/cookie';
 
 export default class login extends Component {
     constructor(props) {
@@ -13,6 +13,12 @@ export default class login extends Component {
         }
     }
 
+	componentDidMount(){
+		if(getCookie("uploadgg")){
+			window.location = "/user";
+		}
+	}
+	
     submit() {
         var data = { ...this.state }
         httpPost("/users/login", data, 0)

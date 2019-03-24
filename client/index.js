@@ -10,5 +10,5 @@ app.on('ready', ()=>{
 	// Create a new window
 	var mainWindow = new window({width : 1920, height : 1080});
 	mainWindow.setMenuBarVisibility(false);
-	mainWindow.loadURL('http://localhost:5000');
+	mainWindow.loadURL('http://localhost:3000');
 })
