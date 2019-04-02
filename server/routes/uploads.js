@@ -7,7 +7,6 @@ var fs = require('fs');
 var encryptor = require('file-encryptor');
 var oid = require('mongoose').Types.ObjectId;
 var File = require('../models/files');
-var msg = require('../messages')
 
 var authenticate = require('../authenticate');
 router.use(bodyParser.json());
@@ -40,30 +39,7 @@ var FileFilter = (req, file, cb) => {
 	return cb(null, true);
 };
 
-var middleware = async (req, res, next) => {
-	try {
-		var MB = 1024 * 1024;
-		req.user.limit = 25 * MB;
-		if (req.user.type == "P")
-			req.user.limit = 1024 * MB
-
-		var c = await File.find({ owner: req.user._id }).countDocuments();
-
-		if ((req.user.type != "P") && c >= 5) {
-			var m = { ...msg.failure };
-			m.msg = "Upload limit reached";
-			res.json(m)
-		}
-		else {
-			next()
-		}
-	}
-	catch (err) {
-		next(err);
-	}
-}
-
-router.post('/', authenticate.verifyUser, middleware, (req, res, next) => {
+router.post('/', authenticate.verifyUser, authenticate.user_type, (req, res, next) => {
 	var upload = multer({ storage: storage, fileFilter: FileFilter, limits: { fileSize: req.user.limit } });
 	upload.single('file')(req, res, (err) => {
 		if (err) {
