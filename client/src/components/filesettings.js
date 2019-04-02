@@ -130,7 +130,7 @@ export default class filesettings extends Component {
 							</h5>
 							<div className="w3-container">
 								<h5 className="w3-margin" style={{ display: "inline" }}>Shareable link</h5>
-								<input className="w3-input w3-center" value={constant.baseurl + "/files/" + this.props.fid} readOnly style={{ width: "50%", display: "inline" }} />
+								<input className="w3-input w3-center" value={constant.baseurl + "/files/download/" + this.props.fid} readOnly style={{ width: "50%", display: "inline" }} />
 
 							</div>
 							<h5 className="w3-margin">File Shared With</h5>

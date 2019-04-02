@@ -7,6 +7,7 @@ var config = require('./config');
 var User = require('./models/users');
 var FacebookTokenStrategy = require('passport-facebook-token');
 var msg = require('./messages')
+var File = require('./models/files')
 
 var opts = {};
 
@@ -69,6 +70,7 @@ var middleware = async (req, res, next) => {
 		}
 	}
 	catch (err) {
+		console.log(err)
 		next(err);
 	}
 }
