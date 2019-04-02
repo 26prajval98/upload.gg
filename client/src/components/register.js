@@ -59,10 +59,10 @@ export default class login extends Component {
 						<div className="container-login100-form-btn p-t-10">
 							<button className="login100-form-btn" onClick={(e) => { this.submit() }}>Register</button>
 						</div>
+						<div className="text-center w-full p-t-20">
+							<a className="txt1 bo1 hov1" href="/login"> Login </a>
+						</div>
 					</div>
-				</div>
-				<div className="text-center w-full p-t-20">
-					<a className="txt1 bo1 hov1" href="/login"> Login </a>
 				</div>
 			</div>
 		)

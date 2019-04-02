@@ -47,6 +47,9 @@ exports.jwtPassport = passport.use(new JWTStrategy(opts,
 		});
 	}));
 
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 var middleware = async (req, res, next) => {
 	try {
 		var MB = 1024 * 1024;
@@ -78,7 +81,12 @@ exports.getToken = (user) => {
 	return jwt.sign(user, config.secretKey, { expiresIn: 24 * 60 * 60 });
 }
 
-exports.user_type = middleware
+exports.userType = middleware
+
+exports.validateEmail = (email)=>{
+	var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+	return re.test(String(email).toLowerCase());
+}
 
 exports.facebookPassport = passport.use(new FacebookTokenStrategy({
 	clientID: config.facebook.clientId,

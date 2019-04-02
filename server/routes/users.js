@@ -23,19 +23,25 @@ router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res
 });
 
 router.post('/signup', (req, res, next) => {
-	User.register(new User({ username: req.body.username }), req.body.password, (err) => {
-		if (err) {
-			res.statusCode = 500;
-			res.setHeader('Content-type', 'application/json');
-			res.json({ Status: 'Registration Failed', err: err });
-		}
-		else {
-			res.statusCode = 200;
-			res.setHeader('Content-type', 'application/json');
-			res.json({ Status: 'Registration Successful' });
-			passport.authenticate('local');
-		}
-	})
+	if (!authenticate.validateEmail(req.body.username)) {
+		res.statusCode = 500;
+		res.setHeader('Content-type', 'application/json');
+		res.json({ Status: 'Registration Failed', err: err });
+	}
+	else
+		User.register(new User({ username: req.body.username }), req.body.password, (err) => {
+			if (err) {
+				res.statusCode = 500;
+				res.setHeader('Content-type', 'application/json');
+				res.json({ Status: 'Registration Failed', err: err });
+			}
+			else {
+				res.statusCode = 200;
+				res.setHeader('Content-type', 'application/json');
+				res.json({ Status: 'Registration Successful' });
+				passport.authenticate('local');
+			}
+		})
 })
 
 router.post('/login', passport.authenticate('local'), (req, res) => {

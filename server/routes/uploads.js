@@ -39,7 +39,7 @@ var FileFilter = (req, file, cb) => {
 	return cb(null, true);
 };
 
-router.post('/', authenticate.verifyUser, authenticate.user_type, (req, res, next) => {
+router.post('/', authenticate.verifyUser, authenticate.userType, (req, res, next) => {
 	var upload = multer({ storage: storage, fileFilter: FileFilter, limits: { fileSize: req.user.limit } });
 	upload.single('file')(req, res, (err) => {
 		if (err) {
