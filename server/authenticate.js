@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken');
 var config = require('./config');
 var User = require('./models/users');
 var FacebookTokenStrategy = require('passport-facebook-token');
-var msg = require('../messages')
+var msg = require('./messages')
 
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 
