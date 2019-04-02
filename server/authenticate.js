@@ -8,8 +8,6 @@ var User = require('./models/users');
 var FacebookTokenStrategy = require('passport-facebook-token');
 var msg = require('./messages')
 
-exports.local = passport.use(new LocalStrategy(User.authenticate()));
-
 var opts = {};
 
 var cookieStrategy = () => {
@@ -71,6 +69,8 @@ var middleware = async (req, res, next) => {
 		next(err);
 	}
 }
+
+exports.local = passport.use(new LocalStrategy(User.authenticate()));
 
 exports.verifyUser = passport.authenticate('jwt', { session: false });
 
