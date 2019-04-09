@@ -14,7 +14,10 @@ var Files = new Schema({
         enum : [true, false]
     },
     owner: mongoose.Types.ObjectId,
-    shared: [String]
+    shared: {
+		type : [String],
+		maxlength : 5
+	}
 }, {
         timestamps: true
     });
