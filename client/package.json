@@ -17,6 +17,8 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"serve": "serve -s build",
+		"predeploy" : "react-scripts build",
+		"deploy" : "firebase deploy",
 		"desktop": "electron index.js"
 	},
 	"eslintConfig": {
