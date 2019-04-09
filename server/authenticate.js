@@ -8,6 +8,7 @@ var User = require('./models/users');
 var FacebookTokenStrategy = require('passport-facebook-token');
 var msg = require('./messages')
 var File = require('./models/files')
+var applyPermissions = require('./rbac').applyPermission
 
 var opts = {};
 
@@ -53,16 +54,11 @@ passport.deserializeUser(User.deserializeUser());
 
 var middleware = async (req, res, next) => {
 	try {
-		var MB = 1024 * 1024;
-		req.user.limit = 25 * MB;
-		if (req.user.type == "P")
-			req.user.limit = 1024 * MB
-
-		var c = await File.find({ owner: req.user._id }).countDocuments();
-
-		if ((req.user.type != "P") && c >= 5) {
-			var m = { ...msg.failure };
-			m.msg = "Upload limit reached";
+		var count = await File.find({ owner: req.user._id }).countDocuments();
+		req.user.count = count
+		var x = applyPermissions(req)
+		if (!x) {
+			m.msg = {...msg.failure,  msg : "PERMISSION DENIED"};
 			res.json(m)
 		}
 		else {
@@ -85,7 +81,7 @@ exports.getToken = (user) => {
 
 exports.userType = middleware
 
-exports.validateEmail = (email)=>{
+exports.validateEmail = (email) => {
 	var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 	return re.test(String(email).toLowerCase());
 }
