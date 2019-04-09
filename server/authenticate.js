@@ -55,7 +55,7 @@ passport.deserializeUser(User.deserializeUser());
 var middleware = async (req, res, next) => {
 	try {
 		var count = await File.find({ owner: req.user._id }).countDocuments();
-		req.user.count = count
+		Object.assign(req.user, {count})
 		var x = applyPermissions(req)
 		if (!x) {
 			m.msg = {...msg.failure,  msg : "PERMISSION DENIED"};
