@@ -86,6 +86,7 @@ export default class upload extends Component {
 		this.setState({
 			file: null
 		})
+		window.location.reload()
 	}
 
 	componentDidMount() {
@@ -96,7 +97,7 @@ export default class upload extends Component {
 
 
 	render() {
-		var btn = this.state.file === null ? "w3-disabled" : "";
+		var btn = this.state.file === null ? "w3-hide" : "";
 		var greenbtn = btn + " w3-button w3-green"
 		var redbtn = btn + " w3-button w3-red"
 		return (
