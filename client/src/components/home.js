@@ -18,7 +18,7 @@ export default function home() {
                         <li><a href="/">Home</a></li>
                         <li><a href="/about">About us</a></li>
                         <li><a href="/services">Services</a></li>
-                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="mailto:contact@upload.gg">Contact</a></li>
                     </ul>
                 </div>
             </header>
@@ -30,7 +30,7 @@ export default function home() {
                             <div className="col-lg-6 pr-0">
                                 <h2>Upload.gg  Store & Share</h2>
                                 <p>Store It. Share It </p>
-                                <a href="/plan" className="site-btn">Get your plan</a>
+                                <a href="/login" className="site-btn">Login to get your plan</a>
                             </div>
                         </div>
                         <div className="hero-rocket">

@@ -6,7 +6,7 @@ export default function services() {
 	return (
 		<div>
 			<section className="pricing-section spad pt-4">
-				<div className="container">
+				<div className="container w3-center">
 					<div className="section-title">
 						<img src={sectionTitle} alt="#" />
 						<p>The best out there</p>
@@ -16,7 +16,7 @@ export default function services() {
 						<div className="col-lg-4 col-md-8 offset-md-2 offset-lg-0">
 							<div className="pricing-plan">
 								<div className="pricing-title">
-									<h4>Basic</h4>
+									<h4>Standard</h4>
 								</div>
 								<div className="pricing-body">
 									<h2>₹10<span>/Month</span></h2>
@@ -24,9 +24,7 @@ export default function services() {
 										<li>25MB storage</li>
 										<li>5 Uploads </li>
 										<li>share and public access</li>
-										<li>24/7 technical support</li>
 									</ul>
-									<a href="/plan" className="site-btn">Get Plan</a>
 								</div>
 							</div>
 						</div>
@@ -36,14 +34,12 @@ export default function services() {
 									<h4>Premium</h4>
 								</div>
 								<div className="pricing-body">
-									<h2>₹20<span>/Month</span></h2>
+									<h2>₹100<span>/Month</span></h2>
 									<ul>
-										<li>50MB storage</li>
+										<li>1024MB storage</li>
 										<li>Unlimited Uploads </li>
 										<li>share and public access</li>
-										<li>24/7 technical support</li>
 									</ul>
-									<a href="/plan" className="site-btn">Get Plan</a>
 								</div>
 							</div>
 						</div>
@@ -58,13 +54,12 @@ export default function services() {
 										<li>No uploads</li>
 										<li>Only download public files</li>
 										<li>Read access</li>
-										<li>24/7 technical support</li>
 									</ul>
-									<a href="/plan" className="site-btn">Get Plan</a>
 								</div>
 							</div>
 						</div>
 					</div>
+					<a href="/login" className="site-btn">Login to Get Plan</a>
 				</div>
 			</section>
 

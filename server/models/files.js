@@ -16,10 +16,13 @@ var Files = new Schema({
     owner: mongoose.Types.ObjectId,
     shared: {
 		type : [String],
-		maxlength : 5
+		validate : (val)=>{
+			console.log(val)
+			return val.length < 2
+		}
 	}
 }, {
-        timestamps: true
+		timestamps: true
     });
 
 module.exports = mongoose.model('Files', Files);

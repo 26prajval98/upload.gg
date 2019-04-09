@@ -54,7 +54,8 @@ router.get('/download/:fid', async (req, res, next) => {
 							throw err;
 						res.download(path.join(__dirname, '../public/decrypt', fname), (err) => {
 							if (err)
-								throw err;
+								if (err.message != "Request aborted")
+									throw err;
 							fs.unlinkSync(path.join(__dirname, '../public/decrypt', fname));
 						});
 					})
