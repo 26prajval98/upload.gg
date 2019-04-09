@@ -28,6 +28,7 @@ export default class upload extends Component {
 				progress: 0,
 				showprogress: false
 			})
+			this.refs.input.value = ""
 			window.setAlert(constant.upload.success)
 		}
 	}
@@ -86,11 +87,13 @@ export default class upload extends Component {
 		this.setState({
 			file: null
 		})
-		window.location.reload()
+		this.refs.input.value = ""
+		// window.location.reload()
 	}
 
 	componentDidMount() {
 		this.refs.divs.addEventListener('click', () => {
+			console.log("Hi")
 			this.refs.input.click()
 		})
 	}
