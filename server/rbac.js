@@ -33,28 +33,31 @@ var roles = {
 	P: {}
 }
 
-for (var i = 0; i < S.length; i++){
+for (var i = 0; i < S.length; i++) {
 	var pN = S[i]
 	var o = {}
 	o[pN] = permissions[pN]
 	Object.assign(roles.S, o)
 }
 
-for (var i = 0; i < P.length; i++){
+for (var i = 0; i < P.length; i++) {
 	var pN = P[i]
 	var o = {}
 	o[pN] = permissions[pN]
 	Object.assign(roles.P, o)
 }
 
-exports.applyPermission = (req)=>{
-	var role = roles[req.user.type]
-	var x = true;
-	for(var i=0; i < Object.keys(role).length; i++){
-		let pF = role[Object.keys(role)[i]]
-		x = x && pF(req)
+exports.applyPermission = (req) => {
+	for (var j = 0; j < req.user.type.length; j++) {
+		var r = req.user.type[j]
+		var role = roles[r]
+		for (var i = 0; i < Object.keys(role).length; i++) {
+			let pF = role[Object.keys(role)[i]]
+			if (!pF(req))
+				return false
+		}
 	}
-	return x
+	return true
 }
 
 exports.roles = roles

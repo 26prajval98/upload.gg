@@ -58,7 +58,7 @@ router.get('/logout', (req, res, next) => {
 })
 
 router.get('/update/type/:tid', authenticate.verifyUser, (req, res) => {
-	User.findOneAndUpdate({ _id: req.user._id }, { $set: { type: req.params.tid } })
+	User.findOneAndUpdate({ _id: req.user._id }, { $set: { type: [req.params.tid] } })
 		.then((user) => {
 			res.setHeader('Content-Type', 'application/json');
 			res.json({ success: true, user: user });

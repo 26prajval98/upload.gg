@@ -24,7 +24,8 @@ export default class user extends Component {
 		var username, files, type
 		httpGet("/users")
 			.then(res => {
-				type = res.data.type
+				type = res.data.type[0]
+				console.log(type)
 				username = res.data.username
 				return httpGet("/files")
 			})

@@ -6,9 +6,9 @@ var Schema = mongoose.Schema;
 
 var Users = new Schema({
     type: {
-        type: String,
+        type: [String],
         enum: ['S', 'P'],
-        default : 'S'
+        default : ['S']
     },
     facebookId: {
         type: String,
